@@ -1,0 +1,25 @@
+# Activate poetry virtual env:
+VIRTUAL_ENV=$(poetry env info -p)
+export VIRTUAL_ENV
+PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Enable BuildKit (recommended)
+export DOCKER_BUILDKIT=1
+
+# Required: Integration type
+export INTEGRATION=terminal  # or telegram, terminal
+
+# Required: Authentication token for your integration
+export DISCORD_TOKEN=your_discord_bot_token
+# export TELEGRAM_TOKEN=your_telegram_bot_token
+
+# Optional: Data directory (default: ./persistent_data)
+export PERSISTENT_DATA_PATH=./persistent_data
+
+# Optional: Logging level (default: INFO)
+export LOG_LEVEL=DEBUG
+
+# Optional: Scraping settings
+export SCRAPE_INTERVAL=300  # seconds
+export REQUEST_DELAY_MIN=1  # seconds
+export REQUEST_DELAY_MAX=3  # seconds

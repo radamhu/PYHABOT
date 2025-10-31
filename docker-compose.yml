@@ -1,0 +1,55 @@
+services:
+  # PYHABOT - HardverApró monitoring bot
+  pyhabot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Enable BuildKit for multi-stage build caching
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+      cache_from:
+        - pyhabot:latest
+        - pyhabot:builder
+      # Target the runtime stage for production
+      target: runtime
+    image: pyhabot:latest
+    container_name: pyhabot
+    environment:
+      - TZ=Europe/Budapest
+      - PYTHONUNBUFFERED=1  # Enable real-time logging
+      - PERSISTENT_DATA_PATH=/data
+      # Integration selection (discord|telegram|terminal)
+      - INTEGRATION=${INTEGRATION:-terminal}
+      # Platform-specific tokens (set these as secrets or env vars)
+      - DISCORD_TOKEN=${DISCORD_TOKEN:-}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN:-}
+      # Optional webhook configuration
+      - WEBHOOK_URL=${WEBHOOK_URL:-}
+      # Logging configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    restart: unless-stopped
+    # Resource limits (optional but recommended)
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # Health check - check if the bot process is running
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # Volume for persistent data (watches, advertisements, config)
+    volumes:
+      - ./persistent_data:/data
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

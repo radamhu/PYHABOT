@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>HardverApró - Teszt keresési eredmények</title>
+</head>
+<body>
+    <div class="uad-list">
+        <ul>
+            <li class="media" data-uadid="123456">
+                <div class="uad-col-image">
+                    <a href="https://hardverapro.hu/termek/test-termek-1/123456.html">
+                        <img src="https://hardverapro.hu/media/test1.jpg" alt="Test termék 1">
+                    </a>
+                </div>
+                <div class="uad-col-title">
+                    <h1><a href="https://hardverapro.hu/termek/test-termek-1/123456.html">Test termék 1 - Eladó</a></h1>
+                </div>
+                <div class="uad-col-info">
+                    <div class="uad-cities">Budapest</div>
+                    <div class="uad-time">
+                        <time>ma 14:30</time>
+                    </div>
+                    <div class="uad-user-text">
+                        <a href="https://hardverapro.hu/profil/testuser1/">testuser1</a>
+                        <span>(4.5)</span>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span>100 000 Ft</span>
+                </div>
+            </li>
+            
+            <li class="media" data-uadid="789012">
+                <div class="uad-col-image">
+                    <a href="https://hardverapro.hu/termek/test-termek-2/789012.html">
+                        <img src="https://hardverapro.hu/media/test2.jpg" alt="Test termék 2">
+                    </a>
+                </div>
+                <div class="uad-col-title">
+                    <h1><a href="https://hardverapro.hu/termek/test-termek-2/789012.html">Test termék 2 - Nagyon jó állapotú</a></h1>
+                </div>
+                <div class="uad-col-info">
+                    <div class="uad-cities">Debrecen</div>
+                    <div class="uad-time">
+                        <time>tegnap 10:15</time>
+                    </div>
+                    <div class="uad-user-text">
+                        <a href="https://hardverapro.hu/profil/testuser2/">testuser2</a>
+                        <span>(5.0)</span>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span>250 000 Ft</span>
+                </div>
+            </li>
+            
+            <li class="media" data-uadid="345678">
+                <div class="uad-col-image">
+                    <a href="https://hardverapro.hu/termek/test-termek-3/345678.html">
+                        <img src="https://hardverapro.hu/media/test3.jpg" alt="Test termék 3">
+                    </a>
+                </div>
+                <div class="uad-col-title">
+                    <h1><a href="https://hardverapro.hu/termek/test-termek-3/345678.html">Test termék 3 - Csere is érdekel</a></h1>
+                </div>
+                <div class="uad-col-info">
+                    <div class="uad-cities">Szeged</div>
+                    <div class="uad-time">
+                        <time>2025-10-28</time>
+                    </div>
+                    <div class="uad-user-text">
+                        <a href="https://hardverapro.hu/profil/testuser3/">testuser3</a>
+                        <span>(3.8)</span>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span>1.5M Ft</span>
+                </div>
+            </li>
+            
+            <li class="media" data-uadid="901234">
+                <div class="uad-col-image">
+                    <a href="https://hardverapro.hu/termek/test-termek-4/901234.html">
+                        <img src="https://hardverapro.hu/media/test4.jpg" alt="Test termék 4">
+                    </a>
+                </div>
+                <div class="uad-col-title">
+                    <h1><a href="https://hardverapro.hu/termek/test-termek-4/901234.html">Test termék 4 - Előresorolva</a></h1>
+                </div>
+                <div class="uad-col-info">
+                    <div class="uad-cities">Pécs</div>
+                    <div class="uad-time">
+                        <time>előresorolva</time>
+                    </div>
+                    <div class="uad-user-text">
+                        <a href="https://hardverapro.hu/profil/testuser4/">testuser4</a>
+                        <span>(4.2)</span>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span>keresem</span>
+                </div>
+            </li>
+            
+            <!-- Edge case: Missing price -->
+            <li class="media" data-uadid="567890">
+                <div class="uad-col-image">
+                    <a href="https://hardverapro.hu/termek/test-termek-5/567890.html">
+                        <img src="https://hardverapro.hu/media/test5.jpg" alt="Test termék 5">
+                    </a>
+                </div>
+                <div class="uad-col-title">
+                    <h1><a href="https://hardverapro.hu/termek/test-termek-5/567890.html">Test termék 5 - Ár megegyezés szerint</a></h1>
+                </div>
+                <div class="uad-col-info">
+                    <div class="uad-cities">Győr</div>
+                    <div class="uad-time">
+                        <time>ma 09:45</time>
+                    </div>
+                    <div class="uad-user-text">
+                        <a href="https://hardverapro.hu/profil/testuser5/">testuser5</a>
+                        <span>(0.0)</span>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span></span>
+                </div>
+            </li>
+            
+            <!-- Edge case: Missing seller info -->
+            <li class="media" data-uadid="234567">
+                <div class="uad-col-image">
+                    <a href="https://hardverapro.hu/termek/test-termek-6/234567.html">
+                        <img src="https://hardverapro.hu/media/test6.jpg" alt="Test termék 6">
+                    </a>
+                </div>
+                <div class="uad-col-title">
+                    <h1><a href="https://hardverapro.hu/termek/test-termek-6/234567.html">Test termék 6 - Nincs eladó</a></h1>
+                </div>
+                <div class="uad-col-info">
+                    <div class="uad-cities">Veszprém</div>
+                    <div class="uad-time">
+                        <time>2025-10-25</time>
+                    </div>
+                    <div class="uad-user-text">
+                        <span></span>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span>75 000 Ft</span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

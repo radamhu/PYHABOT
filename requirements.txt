@@ -1,5 +1,0 @@
-discord.py==2.5.0
-telegram.py @ git+https://github.com/ilovetocode2019/telegram.py.git@1c095462fa83f7ff225624f3eda69f4d04456cb5
-python-dotenv==1.0.1
-tinydb==4.8.2
-beautifulsoup4==4.13.3

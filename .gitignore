@@ -1,8 +1,79 @@
-.vscode/launch.json
-**/__pycache__
-
-.env
+# project files to be ignored by git
 databank/
 persistent_data/
+
+# Python-specific files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
 venv/
-venv2/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Node / TypeScript
+node_modules/
+dist/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+*.tsbuildinfo
+
+# Lockfiles (optional to ignore - keep if you want them tracked)
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
+
+# Environment
+.env
+.envrc
+.env.local
+.env.*.local
+.env.*.secret
+
+# Direnv
+.direnv/
+
+# Playwright / browser caches
+.playwright/
+playwright/.local-browsers
+playwright/.cache
+
+# Logs, temp, editor files
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
+
+# Coverage / test output
+coverage/
+.nyc_output/
+.pytest_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Docker overrides
+docker-compose.override.yml
+
+# Misc
+*.pem
+*.key

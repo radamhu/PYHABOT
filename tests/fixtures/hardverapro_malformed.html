@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>HardverApró - Malformed content</title>
+</head>
+<body>
+    <div class="uad-list">
+        <ul>
+            <!-- Missing data-uadid -->
+            <li class="media">
+                <div class="uad-col-title">
+                    <h1><a href="https://hardverapro.hu/termek/malformed/999999.html">Malformed ad</a></h1>
+                </div>
+                <div class="uad-col-info">
+                    <div class="uad-cities">Budapest</div>
+                    <div class="uad-time">
+                        <time>ma 12:00</time>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span>50 000 Ft</span>
+                </div>
+            </li>
+            
+            <!-- Missing title -->
+            <li class="media" data-uadid="111111">
+                <div class="uad-col-info">
+                    <div class="uad-cities">Debrecen</div>
+                    <div class="uad-time">
+                        <time>tegnap 15:30</time>
+                    </div>
+                </div>
+                <div class="uad-price">
+                    <span>30 000 Ft</span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

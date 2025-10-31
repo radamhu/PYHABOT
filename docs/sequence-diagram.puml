@@ -1,0 +1,78 @@
+@startuml sequence
+!theme plain
+title PYHABOT Scrape & Notify Flow
+
+actor User
+participant "CLI" as cli
+participant "Pyhabot Core" as core
+participant "Scheduler" as scheduler
+participant "Scraper" as scraper
+participant "HardverApró" as ha
+participant "Repository" as repo
+participant "Integration" as integration
+database "TinyDB" as db
+
+User -> cli : pyhabot run
+cli -> core : start()
+activate core
+
+core -> scheduler : run_forever()
+activate scheduler
+
+loop Every N seconds with jitter
+    scheduler -> repo : get_due_watches()
+    repo -> db : query watches
+    db --> repo : watch list
+    repo --> scheduler : watches
+    
+    alt Watch is due
+        scheduler -> scraper : scrape_ads(watch.url)
+        activate scraper
+        
+        scraper -> ha : HTTP GET + headers
+        ha --> scraper : HTML response
+        
+        scraper -> scraper : parse_ads()
+        scraper --> scheduler : ads_data
+        
+        scheduler -> core : handle_new_ads(watch, ads)
+        
+        core -> repo : get_existing_ads(watch)
+        repo -> db : query ads
+        db --> repo : existing_ads
+        repo --> core : ads
+        
+        alt New ads found
+            core -> repo : save_ads(new_ads)
+            repo -> db : insert documents
+            db --> repo : success
+            repo --> core : saved
+            
+            core -> integration : send_new_ads_notification(watch, new_ads)
+            integration --> User : "New ads found!"
+        end
+        
+        alt Price changes detected
+            core -> repo : update_prices(ad_id, new_price)
+            repo -> db : update document
+            db --> repo : success
+            repo --> core : updated
+            
+            core -> integration : send_price_change_notification(ad, old_price, new_price)
+            integration --> User : "Price dropped!"
+        end
+        
+        deactivate scraper
+    end
+end
+
+User -> integration : !add <url>
+integration -> core : handle_add_watch(url)
+core -> repo : create_watch(url)
+repo -> db : insert document
+db --> repo : success
+repo --> core : watch_id
+core --> integration : "Watch added with ID: {watch_id}"
+integration --> User : "Watch added successfully!"
+
+@enduml

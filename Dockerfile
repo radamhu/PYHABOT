@@ -1,34 +1,67 @@
-# Use Python slim image
-FROM python:3.12-slim
+# Multi-stage build for optimized layer caching and smaller final image
 
-# Install necessary packages
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+# Stage 1: Builder stage with all dependencies
+FROM python:3.12-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y git build-essential && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Upgrade pip and install Poetry
+RUN pip install --upgrade pip && \
+    pip install poetry
+
+# Configure Poetry for production
+RUN poetry config virtualenvs.create false && \
+    poetry config cache-dir /tmp/poetry_cache
+
+# Copy dependency files first (optimized layer caching)
+COPY pyproject.toml poetry.lock* ./
+
+# Install dependencies with cache optimization
+RUN poetry install --only=main --no-root && \
+    rm -rf /tmp/poetry_cache
+
+# Stage 2: Runtime stage with minimal dependencies
+FROM python:3.12-slim as runtime
+
+# Install only runtime dependencies
+RUN apt-get update && apt-get install -y git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Create non-root user for security
+RUN groupadd -r pyhabot && useradd -r -g pyhabot pyhabot
 
 # Set working directory
 WORKDIR /app
 ENV PERSISTENT_DATA_PATH=/data
 
-# Create persistent data directory
-RUN mkdir -p /data
+# Create persistent data directory with proper permissions
+RUN mkdir -p /data && chown pyhabot:pyhabot /data
 
-# Copy the requirements file first to leverage Docker cache
-COPY requirements.txt .
+# Copy installed packages from builder stage
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Upgrade pip
-RUN pip install --upgrade pip
+# Copy application code
+COPY --chown=pyhabot:pyhabot . .
 
-# Install dependencies
-RUN pip install -r requirements.txt
+# Install the application
+RUN pip install -e . && \
+    rm -rf /root/.cache/pip
 
-# Copy the rest of the application code
-COPY . .
-
-# Add environment secret expansion script
-COPY entrypoint.sh /entrypoint.sh
+# Copy entrypoint script and set permissions
+COPY --chown=pyhabot:pyhabot entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+# Switch to non-root user
+USER pyhabot
 
 # Set entrypoint to handle secrets before running the main command
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Ensure the application runs as expected
-CMD ["python3", "-u", "/app/run.py"]
+# Use the new CLI command
+CMD ["pyhabot", "run"]
