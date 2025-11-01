@@ -1,7 +1,7 @@
 # PYHABOT - GitHub Copilot Instructions
 
 ## Project Overview
-PYHABOT is an async Python bot that monitors HardverApró (Hungarian classified ads site) search result pages. It scrapes ads, tracks new listings and price changes, and sends notifications via Discord, Telegram, or terminal interface. Data is persisted in TinyDB JSON files.
+PYHABOT is an async Python bot that monitors HardverApró (Hungarian classified ads site) search result pages. It scrapes ads, tracks new listings and price changes, and sends notifications via Discord or terminal interface. Data is persisted in TinyDB JSON files.
 
 **Core Purpose**: Watch specific search URLs, notify users of new ads and price changes via multiple chat integrations.
 
@@ -16,7 +16,7 @@ pyhabot/                    # Main package
   integrations/           # Chat platform implementations
     integration_base.py   # Abstract base classes (IntegrationBase, MessageBase)
     discord.py           # Discord client (discord.py 2.5.0)
-    telegram.py          # Telegram client (telegram.py from git)
+
     terminal.py          # Simple REPL for testing
 run.py                    # Entry point: bootstraps from INTEGRATION env var
 docs/                     # Architecture and analysis documentation
@@ -26,7 +26,7 @@ persistent_data/          # Runtime data (config.json, tinydb.json)
 ## Key Technologies & Dependencies
 - **Python 3.11+** with async/await patterns
 - **discord.py 2.5.0** - Discord integration
-- **telegram.py** (git: ilovetocode2019/telegram.py@1c09546) - Telegram integration
+
 - **aiohttp** - Async HTTP client for scraping
 - **beautifulsoup4 4.13.3** - HTML parsing
 - **tinydb 4.8.2** - JSON-based document database
@@ -42,7 +42,7 @@ persistent_data/          # Runtime data (config.json, tinydb.json)
 ### Integration Pattern
 - `IntegrationBase` defines abstract contract for message handling
 - `MessageBase` provides common message interface across platforms
-- Concrete integrations (Discord/Telegram/Terminal) implement platform-specific clients
+- Concrete integrations (Discord/Terminal) implement platform-specific clients
 - Selected via `INTEGRATION` env var at startup
 
 ### Data Flow
@@ -120,8 +120,8 @@ Background: Pyhabot.run_forever → scraper.scrape_ads → DatabaseHandler
 5. **Commands**: Update help text in Hungarian and consider English localization
 
 ### Environment Variables
-- `INTEGRATION`: discord | telegram | terminal (required)
-- `DISCORD_TOKEN` or `TELEGRAM_TOKEN`: Auth tokens (required for respective integration)
+- `INTEGRATION`: discord | terminal (required)
+- `DISCORD_TOKEN`: Auth token (required for Discord integration)
 - `PERSISTENT_DATA_PATH`: Data directory (default: `./persistent_data`)
 
 ## Suggested Improvements (Tech Debt)

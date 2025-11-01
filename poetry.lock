@@ -1329,28 +1329,6 @@ files = [
 ]
 
 [[package]]
-name = "telegram.py"
-version = "1.0.0a0"
-description = "An async API wrapper for the Telegram bot API in Python"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = []
-develop = false
-
-[package.dependencies]
-aiohttp = "*"
-
-[package.extras]
-docs = ["furo", "sphinx (==8.1.3)", "sphinx-autobuild", "sphinx-copybutton", "sphinx-inline-tabs", "sphinxcontrib-websupport", "sphinxcontrib_trio (==1.1.2)", "sphinxext-opengraph", "typing-extensions"]
-
-[package.source]
-type = "git"
-url = "https://github.com/ilovetocode2019/telegram.py"
-reference = "1c09546"
-resolved_reference = "1c095462fa83f7ff225624f3eda69f4d04456cb5"
-
-[[package]]
 name = "tinydb"
 version = "4.8.2"
 description = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
@@ -1546,4 +1524,4 @@ dev = []
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "718af3fb92048a81c615c76f201885886d350584e1041291478c356980d59a2c"
+content-hash = "afb728273e6db09f65742d6d44201cc6b991598a4a3698492a70cab92ace2eb4"

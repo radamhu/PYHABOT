@@ -7,7 +7,9 @@ from unittest.mock import MagicMock, patch
 from io import StringIO
 import sys
 
-from src.pyhabot.cli import create_parser, main_async
+from src.pyhabot.simple_cli import create_parser, main_async
+from src.pyhabot.adapters.repos.tinydb_repo import TinyDBRepository
+from src.pyhabot.domain.services import WatchService
 
 
 @pytest.fixture
@@ -34,9 +36,9 @@ def test_parser_create():
 
 def test_parser_run_command(parser):
     """Test parsing run command."""
-    args = parser.parse_args(["run", "--integration", "discord"])
+    args = parser.parse_args(["run", "--integration", "terminal"])
     assert args.command == "run"
-    assert args.integration == "discord"
+    assert args.integration == "terminal"
 
 
 def test_parser_add_watch_command(parser):
@@ -70,9 +72,9 @@ def test_parser_rescrape_all_command(parser):
 @pytest.mark.asyncio
 async def test_add_watch_command(mock_config):
         """Test add-watch command execution."""
-        with patch('src.pyhabot.cli.Config', return_value=mock_config), \
-             patch('src.pyhabot.cli.TinyDBRepository') as mock_repo_class, \
-             patch('src.pyhabot.cli.WatchService') as mock_service_class:
+        with patch('src.pyhabot.simple_cli.Config', return_value=mock_config), \
+             patch('src.pyhabot.simple_cli.TinyDBRepository') as mock_repo_class, \
+             patch('src.pyhabot.simple_cli.WatchService') as mock_service_class:
     
             # Setup mocks
             mock_repo = MagicMock()
@@ -102,9 +104,9 @@ async def test_add_watch_command(mock_config):
 @pytest.mark.asyncio
 async def test_list_command_empty(mock_config):
     """Test list command with no watches."""
-    with patch('src.pyhabot.cli.Config', return_value=mock_config), \
-         patch('src.pyhabot.cli.TinyDBRepository') as mock_repo_class, \
-         patch('src.pyhabot.cli.WatchService') as mock_service_class:
+    with patch('src.pyhabot.simple_cli.Config', return_value=mock_config), \
+         patch('src.pyhabot.simple_cli.TinyDBRepository') as mock_repo_class, \
+         patch('src.pyhabot.simple_cli.WatchService') as mock_service_class:
         
         # Setup mocks
         mock_repo = MagicMock()
@@ -134,9 +136,9 @@ async def test_list_command_with_watches(mock_config):
     """Test list command with watches."""
     from src.pyhabot.domain.models import Watch, NotificationTarget, NotificationType
     
-    with patch('src.pyhabot.cli.Config', return_value=mock_config), \
-         patch('src.pyhabot.cli.TinyDBRepository') as mock_repo_class, \
-         patch('src.pyhabot.cli.WatchService') as mock_service_class:
+    with patch('src.pyhabot.simple_cli.Config', return_value=mock_config), \
+         patch('src.pyhabot.simple_cli.TinyDBRepository') as mock_repo_class, \
+         patch('src.pyhabot.simple_cli.WatchService') as mock_service_class:
         
         # Setup mocks
         mock_repo = MagicMock()
@@ -150,7 +152,7 @@ async def test_list_command_with_watches(mock_config):
             last_checked=1234567890.0,
             notifyon=NotificationTarget(
                 channel_id="channel1",
-                integration=NotificationType.DISCORD
+                integration=NotificationType.WEBHOOK
             ),
             webhook="https://example.com/webhook1"
         )
@@ -188,9 +190,9 @@ async def test_list_command_with_watches(mock_config):
 @pytest.mark.asyncio
 async def test_rescrape_specific_watch(mock_config):
     """Test rescrape command for specific watch."""
-    with patch('src.pyhabot.cli.Config', return_value=mock_config), \
-         patch('src.pyhabot.cli.TinyDBRepository') as mock_repo_class, \
-         patch('src.pyhabot.cli.WatchService') as mock_service_class:
+    with patch('src.pyhabot.simple_cli.Config', return_value=mock_config), \
+         patch('src.pyhabot.simple_cli.TinyDBRepository') as mock_repo_class, \
+         patch('src.pyhabot.simple_cli.WatchService') as mock_service_class:
         
         # Setup mocks
         mock_repo = MagicMock()
@@ -220,9 +222,9 @@ async def test_rescrape_all_watches(mock_config):
     """Test rescrape command for all watches."""
     from src.pyhabot.domain.models import Watch
     
-    with patch('src.pyhabot.cli.Config', return_value=mock_config), \
-         patch('src.pyhabot.cli.TinyDBRepository') as mock_repo_class, \
-         patch('src.pyhabot.cli.WatchService') as mock_service_class:
+    with patch('src.pyhabot.simple_cli.Config', return_value=mock_config), \
+         patch('src.pyhabot.simple_cli.TinyDBRepository') as mock_repo_class, \
+         patch('src.pyhabot.simple_cli.WatchService') as mock_service_class:
         
         # Setup mocks
         mock_repo = MagicMock()

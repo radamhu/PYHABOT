@@ -167,8 +167,9 @@ class AdvertisementService:
 class NotificationService:
     """Service for sending notifications."""
     
-    def __init__(self, notifier: NotifierPort):
+    def __init__(self, notifier: NotifierPort, webhook_notifier: Optional[NotifierPort] = None):
         self.notifier = notifier
+        self.webhook_notifier = webhook_notifier
     
     async def send_new_ad_notifications(
         self, 
@@ -198,8 +199,8 @@ class NotificationService:
                 results.append(result)
             
             # Send to webhook if configured
-            if watch.webhook:
-                result = await self.notifier.send_webhook_notification(
+            if watch.webhook and self.webhook_notifier:
+                result = await self.webhook_notifier.send_webhook_notification(
                     watch.webhook, 
                     message
                 )
@@ -239,8 +240,8 @@ class NotificationService:
                 results.append(result)
             
             # Send to webhook if configured
-            if watch.webhook:
-                result = await self.notifier.send_webhook_notification(
+            if watch.webhook and self.webhook_notifier:
+                result = await self.webhook_notifier.send_webhook_notification(
                     watch.webhook, 
                     message
                 )

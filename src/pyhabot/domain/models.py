@@ -12,8 +12,6 @@ from enum import Enum
 
 class NotificationType(Enum):
     """Types of notification targets."""
-    DISCORD = "discord"
-    TELEGRAM = "telegram"
     WEBHOOK = "webhook"
 
 

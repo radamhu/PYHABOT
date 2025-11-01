@@ -3,7 +3,7 @@ PYHABOT - Async Python bot for monitoring HardverApró classified ads.
 
 This package provides an async bot that monitors HardverApró search result pages,
 scrapes ads, tracks new listings and price changes, and sends notifications
-via Discord, Telegram, or terminal interface.
+via Discord or terminal interface.
 """
 
 __version__ = "0.1.0"

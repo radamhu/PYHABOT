@@ -6,12 +6,12 @@ build-backend = "poetry.core.masonry.api"
 name = "pyhabot"
 version = "0.1.0"
 description = "Async Python bot that monitors HardverApró (Hungarian classified ads site) search result pages"
-authors = ["radamhu <radamhu@example.com>"]
+authors = ["Adam Roland <roland@adaminformatika.hu>"]
 readme = "README.md"
 license = "MIT"
 homepage = "https://github.com/radamhu/PYHABOT"
 repository = "https://github.com/radamhu/PYHABOT"
-keywords = ["bot", "scraping", "discord", "telegram", "hardverapro", "monitoring"]
+keywords = ["bot", "scraping", "hardverapro", "monitoring", "webhook"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -27,16 +27,14 @@ classifiers = [
 packages = [{include = "pyhabot", from = "src"}]
 
 [tool.poetry.scripts]
-pyhabot = "pyhabot.cli:main"
+pyhabot = "pyhabot.simple_cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-discord-py = "2.5.0"
 python-dotenv = "1.0.1"
 tinydb = "4.8.2"
 beautifulsoup4 = "4.13.3"
 aiohttp = "^3.9.0"
-telegram-py = {git = "https://github.com/ilovetocode2019/telegram.py", rev = "1c09546"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
@@ -123,17 +121,9 @@ strict_optional = true
 
 [[tool.mypy.overrides]]
 module = [
-    "telegram_py.*",
-    "telegrampy.*",
-    "discord.*",
     "tinydb.*",
     "beautifulsoup4.*",
-    "aiohttp.*",
-    "pytest.*",
-    "pytest_asyncio.*",
-    "pytest_cov.*",
 ]
-ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"

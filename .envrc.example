@@ -7,11 +7,7 @@ PATH="$VIRTUAL_ENV/bin:$PATH"
 export DOCKER_BUILDKIT=1
 
 # Required: Integration type
-export INTEGRATION=terminal  # or telegram, terminal
-
-# Required: Authentication token for your integration
-export DISCORD_TOKEN=your_discord_bot_token
-# export TELEGRAM_TOKEN=your_telegram_bot_token
+export INTEGRATION=terminal
 
 # Optional: Data directory (default: ./persistent_data)
 export PERSISTENT_DATA_PATH=./persistent_data

@@ -1,1 +1,0 @@
-now that we have REFACTORING_PLAN.md, take all your considerations and suggestions and create docs/REFACTORING_TASKS.md also, list here all tasks, making smaller steps / "chunks" , yes we follow spec-drive delopment guidelines, like SPEC, PLAN, TASKS and so on

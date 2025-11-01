@@ -146,8 +146,9 @@ services:
       - PYTHONUNBUFFERED=1
       - PERSISTENT_DATA_PATH=/data
       - INTEGRATION=${INTEGRATION:-terminal}
-      - DISCORD_TOKEN=${DISCORD_TOKEN:-}
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN:-}
+      # Optional webhook configuration
+      - WEBHOOK_URL=${WEBHOOK_URL:-}
+
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     # Resource limits optimized for bot workload
     deploy:
@@ -187,7 +188,7 @@ volumes:
    - BuildKit cache optimization for faster builds
 
 2. **Bot-Specific Environment**
-   - Integration selection (discord/telegram/terminal)
+   - Integration selection (terminal)
    - Token management for different platforms
    - Persistent data path configuration
 
@@ -214,17 +215,14 @@ volumes:
 ```toml
 [tool.poetry.dependencies]
 python = "^3.11"
-discord-py = "2.5.0"
 python-dotenv = "1.0.1"
 tinydb = "4.8.2"
 beautifulsoup4 = "4.13.3"
 aiohttp = "^3.9.0"
-telegram-py = {git = "https://github.com/ilovetocode2019/telegram.py", rev = "1c09546"}
+
 ```
 
 ### Key Dependencies
-- **discord-py**: Discord integration
-- **telegram-py**: Telegram integration  
 - **aiohttp**: Async HTTP client for scraping
 - **beautifulsoup4**: HTML parsing
 - **tinydb**: JSON-based document database
@@ -249,11 +247,10 @@ DOCKER_BUILDKIT=1 docker-compose build
 # Terminal integration (default)
 docker-compose up pyhabot
 
-# Discord integration
-INTEGRATION=discord DISCORD_TOKEN=your_token docker-compose up -d pyhabot
+# Terminal integration
+INTEGRATION=terminal docker-compose up pyhabot
 
-# Telegram integration
-INTEGRATION=telegram TELEGRAM_TOKEN=your_token docker-compose up -d pyhabot
+
 
 # View logs
 docker-compose logs -f pyhabot
@@ -290,7 +287,7 @@ docker-compose up -d --force-recreate pyhabot
 ✅ Async logging for non-blocking operation  
 
 ### Docker Compose Enhancements
-✅ Multi-platform integration support (Discord/Telegram/Terminal)  
+✅ Multi-platform integration support (Discord/Terminal)  
 ✅ Persistent data storage with named volumes  
 ✅ Resource limits optimized for bot workloads  
 ✅ Health monitoring for background processes  

@@ -13,7 +13,7 @@ from pathlib import Path
 from src.pyhabot.adapters.repos.tinydb_repo import TinyDBRepository
 from src.pyhabot.adapters.scraping.hardverapro import HardveraproScraper
 from src.pyhabot.domain.services import ScrapingService
-from src.pyhabot.config import Config
+from src.pyhabot.simple_config import SimpleConfig as Config
 
 
 class TestTerminalIntegrationE2E:

@@ -1,8 +1,8 @@
 """
-Configuration management for PYHABOT.
+Simplified configuration management for PYHABOT.
 
 This module provides typed configuration loading from environment variables
-and .env files with validation and coercion.
+and .env files without the integration pattern.
 """
 
 import os
@@ -16,8 +16,8 @@ from .logging import get_logger
 logger = get_logger(__name__)
 
 
-class Config:
-    """Configuration class for PYHABOT."""
+class SimpleConfig:
+    """Simplified configuration class for PYHABOT without integration requirements."""
     
     def __init__(self, env_file: Optional[str] = None):
         """Initialize configuration from environment variables."""
@@ -35,22 +35,10 @@ class Config:
                 env_path = env_path.parent
         
         self._load_config()
-        logger.info("Configuration loaded successfully")
+        logger.info("Simple configuration loaded successfully")
     
     def _load_config(self) -> None:
         """Load and validate all configuration values."""
-        # Required configuration
-        self.integration: str = self._get_required_env("INTEGRATION", 
-            "Integration type (discord, telegram, terminal)")
-        
-        # Integration-specific required tokens
-        if self.integration == "discord":
-            self.discord_token: str = self._get_required_env("DISCORD_TOKEN",
-                "Discord bot token")
-        elif self.integration == "telegram":
-            self.telegram_token: str = self._get_required_env("TELEGRAM_TOKEN",
-                "Telegram bot token")
-        
         # Optional configuration with defaults
         self.persistent_data_path: str = os.getenv("PERSISTENT_DATA_PATH", "./persistent_data")
         self.log_level: str = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -66,22 +54,23 @@ class Config:
         self.max_retries: int = self._get_int_env("MAX_RETRIES", 3,
             "Maximum number of retries for failed requests")
         
+        # Request delays for scraping
+        self.request_delay_min: float = self._get_float_env("REQUEST_DELAY_MIN", 1.0,
+            "Minimum delay between requests in seconds")
+        self.request_delay_max: float = self._get_float_env("REQUEST_DELAY_MAX", 3.0,
+            "Maximum delay between requests in seconds")
+        
         # User agents for scraping
         self.user_agents: List[str] = self._get_list_env("USER_AGENTS", [
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0",
         ], "List of user agents for scraping")
         
         # Validate configuration
         self._validate_config()
-    
-    def _get_required_env(self, key: str, description: str) -> str:
-        """Get a required environment variable."""
-        value = os.getenv(key)
-        if not value:
-            raise ValueError(f"Required environment variable {key} is not set. {description}")
-        return value
     
     def _get_int_env(self, key: str, default: int, description: str) -> int:
         """Get an integer environment variable with default."""
@@ -95,6 +84,18 @@ class Config:
             logger.warning(f"Invalid integer value for {key}: {value}, using default: {default}")
             return default
     
+    def _get_float_env(self, key: str, default: float, description: str) -> float:
+        """Get a float environment variable with default."""
+        value = os.getenv(key)
+        if value is None:
+            return default
+        
+        try:
+            return float(value)
+        except ValueError:
+            logger.warning(f"Invalid float value for {key}: {value}, using default: {default}")
+            return default
+    
     def _get_list_env(self, key: str, default: List[str], description: str) -> List[str]:
         """Get a list environment variable with default."""
         value = os.getenv(key)
@@ -106,11 +107,6 @@ class Config:
     
     def _validate_config(self) -> None:
         """Validate configuration values."""
-        # Validate integration
-        valid_integrations = ["discord", "telegram", "terminal"]
-        if self.integration not in valid_integrations:
-            raise ValueError(f"Invalid integration: {self.integration}. Must be one of: {valid_integrations}")
-        
         # Validate log level
         valid_log_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
         if self.log_level not in valid_log_levels:
@@ -134,21 +130,27 @@ class Config:
         if self.max_retries < 0:
             raise ValueError(f"Max retries must be non-negative: {self.max_retries}")
         
+        # Validate request delays
+        if self.request_delay_min < 0:
+            raise ValueError(f"Request delay min must be non-negative: {self.request_delay_min}")
+        
+        if self.request_delay_max < self.request_delay_min:
+            raise ValueError(f"Request delay max must be >= min: {self.request_delay_max} < {self.request_delay_min}")
+        
         # Validate user agents
         if not self.user_agents:
             raise ValueError("At least one user agent must be configured")
         
-        logger.debug("Configuration validation passed")
+        logger.debug("Simple configuration validation passed")
     
     def __str__(self) -> str:
         """Return string representation of configuration."""
-        return (f"Config(integration={self.integration}, "
-                f"log_level={self.log_level}, "
+        return (f"SimpleConfig(log_level={self.log_level}, "
                 f"scrape_interval={self.scrape_interval}s)")
     
     def __repr__(self) -> str:
         """Return detailed string representation of configuration."""
-        return (f"Config(integration={self.integration!r}, "
+        return (f"SimpleConfig("
                 f"persistent_data_path={self.persistent_data_path!r}, "
                 f"log_level={self.log_level!r}, "
                 f"log_format={self.log_format!r}, "
@@ -156,4 +158,6 @@ class Config:
                 f"scrape_jitter_min={self.scrape_jitter_min}, "
                 f"scrape_jitter_max={self.scrape_jitter_max}, "
                 f"max_retries={self.max_retries}, "
+                f"request_delay_min={self.request_delay_min}, "
+                f"request_delay_max={self.request_delay_max}, "
                 f"user_agents_count={len(self.user_agents)})")

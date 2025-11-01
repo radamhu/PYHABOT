@@ -92,8 +92,8 @@ class WebhookNotifier(NotifierPort):
     
     def _prepare_payload(self, message: str, **kwargs) -> Dict[str, Any]:
         """Prepare webhook payload based on webhook type."""
-        # Default to Discord webhook format
-        webhook_type = kwargs.get("webhook_type", "discord")
+        # Default to generic webhook format
+        webhook_type = kwargs.get("webhook_type", "generic")
         
         if webhook_type == "discord":
             return self._prepare_discord_payload(message, **kwargs)

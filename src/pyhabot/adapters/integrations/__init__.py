@@ -8,8 +8,6 @@ and notification services, implementing the NotifierPort and MessagePort interfa
 from typing import TYPE_CHECKING
 
 from .base import IntegrationAdapter, MessageAdapter
-from .discord import DiscordAdapter
-from .telegram import TelegramAdapter
 from .terminal import TerminalAdapter
 
 if TYPE_CHECKING:
@@ -18,8 +16,6 @@ if TYPE_CHECKING:
 __all__ = [
     "IntegrationAdapter",
     "MessageAdapter", 
-    "DiscordAdapter",
-    "TelegramAdapter",
     "TerminalAdapter",
     "create_integration",
 ]
@@ -27,11 +23,7 @@ __all__ = [
 
 async def create_integration(integration_name: str, config: "Config") -> IntegrationAdapter:
     """Factory function to create integration instances."""
-    if integration_name == "discord":
-        return DiscordAdapter(config.discord_token)
-    elif integration_name == "telegram":
-        return TelegramAdapter(config.telegram_token)
-    elif integration_name == "terminal":
+    if integration_name == "terminal":
         return TerminalAdapter("")  # Terminal doesn't need a token
     else:
-        raise ValueError(f"Unknown integration: {integration_name}")
+        raise ValueError(f"Unknown integration: {integration_name}. Supported integration: terminal")

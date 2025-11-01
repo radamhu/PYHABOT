@@ -115,7 +115,7 @@ ghcr.io/radamhu/pyhabot:master-abc1234    # Branch + SHA
 
 **Core Features:**
 - Web scraping with aiohttp and BeautifulSoup
-- Multiple integrations (Discord, Telegram, Terminal)
+- Multiple integrations (Terminal)
 - TinyDB for data persistence
 - Async/await architecture
 - Configurable monitoring intervals
@@ -123,8 +123,6 @@ ghcr.io/radamhu/pyhabot:master-abc1234    # Branch + SHA
 
 **Key Technologies:**
 - Python 3.11+
-- discord.py 2.5.0
-- telegram.py (git version)
 - aiohttp for async HTTP
 - BeautifulSoup4 for HTML parsing
 - TinyDB for JSON storage
@@ -173,7 +171,7 @@ services:
     environment:
       - INTEGRATION=${INTEGRATION:-terminal}
       - DISCORD_TOKEN=${DISCORD_TOKEN:-}
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN:-}
+
       - PERSISTENT_DATA_PATH=/data
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
@@ -224,12 +222,10 @@ pyhabot run
 Create a `.env` file:
 ```bash
 # Required: Integration type
-INTEGRATION=discord  # or telegram, terminal
+INTEGRATION=terminal  # terminal integration
 
-# Required: Authentication token
-DISCORD_TOKEN=your_discord_bot_token
-# OR
-TELEGRAM_TOKEN=your_telegram_bot_token
+# Optional: Webhook configuration
+WEBHOOK_URL=https://your-webhook-url.com
 
 # Optional: Logging
 LOG_LEVEL=INFO
@@ -301,11 +297,11 @@ PERSISTENT_DATA_PATH=./persistent_data
 **Required Environment Variables:**
 ```bash
 # Integration selection
-INTEGRATION=discord          # or telegram, terminal
+INTEGRATION=terminal          # terminal integration
 
-# Authentication tokens (based on integration)
-DISCORD_TOKEN=your_discord_bot_token
-TELEGRAM_TOKEN=your_telegram_bot_token
+# Optional webhook configuration
+WEBHOOK_URL=https://your-webhook-url.com
+
 
 # Data persistence
 PERSISTENT_DATA_PATH=./persistent_data
@@ -390,7 +386,7 @@ updates:
 ```
 
 **Enhanced Testing:**
-- Integration tests for Discord/Telegram
+- Integration tests for webhook notifications
 - End-to-end tests with fixtures
 - Performance benchmarks
 
@@ -511,7 +507,7 @@ chmod +x entrypoint.sh
 # Check environment variables
 echo $INTEGRATION
 echo $DISCORD_TOKEN
-echo $TELEGRAM_TOKEN
+
 
 # Ensure .env file is properly configured
 # For Docker, check docker-compose environment section

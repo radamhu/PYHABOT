@@ -40,18 +40,20 @@ class SchedulerRunner:
         scraper: ScraperPort,
         repo: RepoPort,
         notifier: NotifierPort,
-        config: SchedulerConfig
+        config: SchedulerConfig,
+        webhook_notifier: Optional[NotifierPort] = None
     ):
-        """Initialize the scheduler runner."""
+        """Initialize scheduler runner."""
         self.scraper = scraper
         self.repo = repo
         self.notifier = notifier
+        self.webhook_notifier = webhook_notifier
         self.config = config
         
         # Services
         self.watch_service = WatchService(repo)
         self.ad_service = AdvertisementService(repo)
-        self.notification_service = NotificationService(notifier)
+        self.notification_service = NotificationService(notifier, webhook_notifier)
         
         # Runtime state
         self._running = False
