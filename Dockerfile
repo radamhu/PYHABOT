@@ -33,7 +33,11 @@ RUN apt-get update && apt-get install -y git && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create non-root user for security
-RUN groupadd -r pyhabot && useradd -r -g pyhabot pyhabot
+# Use host user ID if provided, otherwise use default 999
+ARG USER_ID=999
+ARG GROUP_ID=999
+RUN groupadd -r -g ${GROUP_ID} pyhabot && \
+    useradd -r -u ${USER_ID} -g pyhabot pyhabot
 
 # Set working directory
 WORKDIR /app

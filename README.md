@@ -92,46 +92,42 @@ black src/
 
 ### Using Docker Compose (Recommended)
 
+**Solution 1: Dynamic User ID Mapping (Recommended)**
+
+This approach makes Docker use your exact user ID, preventing permission conflicts:
 
 ```bash
-# Test the Docker setup (Optional)
-./test-docker.sh
+# Automated setup (recommended):
+./scripts/setup-docker.sh
 
-# Build and start Detached mode (the -d flag)
-docker compose up --build -d pyhabot
-docker compose up -d pyhabot
+# Or manual setup:
+echo "USER_ID=$(id -u)" > .env.docker
+echo "GROUP_ID=$(id -g)" >> .env.docker
+echo "TZ=Europe/Budapest" >> .env.docker
+echo "LOG_LEVEL=INFO" >> .env.docker
+echo "PERSISTENT_DATA_PATH=/data" >> .env.docker
 
-# Recreate container (if .env or settings changed), even if their configuration and image haven't changed
-docker compose up -d --force-recreate pyhabot
+# Set proper ownership on persistent_data directory
+sudo chown -R $(id -u):$(id -g) persistent_data/
+
+# Build and start with user mapping
+docker compose --env-file .env.docker up --build -d pyhabot
 
 # Terminal integration (Foreground mode)
-docker-compose up pyhabot
-
-# Terminal integration (default)
-docker-compose up pyhabot
+docker compose --env-file .env.docker up pyhabot
 
 # Access the container with bash if needed
-docker compose exec pyhabot bash
-docker compose exec pyhabot pyhabot list
+docker compose --env-file .env.docker exec pyhabot bash
+docker compose --env-file .env.docker exec pyhabot pyhabot list
 
 # View logs
-docker compose logs -f pyhabot | ccze -m ansi
+docker compose --env-file .env.docker logs -f pyhabot | ccze -m ansi
 
 # Stop
-docker compose down
-
-# Check what UID/GID the pyhabot user has in the container:
-docker run pyhabot:latest id pyhabot
-
-# If the user has UID/GID 999, not 1000. Fix the ownership:
-sudo chown -R 999:999 persistent_data/
-sudo chown -R $USER:$USER persistent_data/
-ls -la persistent_data/
-
-# Now let's try running the container again:
-docker compose up pyhabot
-
+docker compose --env-file .env.docker down
 ```
+
+
 
 
 # Bot Usage
