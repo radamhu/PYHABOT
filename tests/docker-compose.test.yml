@@ -1,0 +1,57 @@
+services:
+  # PYHABOT Webhook Testing Service
+  pyhabot-webhook-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+      target: runtime
+    image: pyhabot:latest
+    container_name: pyhabot-webhook-test
+    environment:
+      - TZ=Europe/Budapest
+      - PYTHONUNBUFFERED=1
+      - PERSISTENT_DATA_PATH=/data
+      - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
+    # Override default command for webhook testing
+    command: ["sleep", "infinity"]  # Keep container running for manual testing
+    volumes:
+      - ./persistent_data:/data
+      - .:/app  # Mount current directory for easy access to test scripts
+    working_dir: /app
+    # Resource limits for testing
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    # No restart policy for testing
+    restart: "no"
+    # Interactive mode for testing
+    stdin_open: true
+    tty: true
+    networks:
+      - pyhabot-test
+
+  # Optional: A simple HTTP server to receive webhook test requests
+  # This can be used to verify webhook payloads without needing a real Discord webhook
+  webhook-test-server:
+    image: nginx:alpine
+    container_name: webhook-test-server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./test/webhook-server.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./test/webhook-logs:/var/log/nginx
+    restart: "no"
+    networks:
+      - pyhabot-test
+    profiles:
+      - test-server
+
+networks:
+  pyhabot-test:
+    driver: bridge

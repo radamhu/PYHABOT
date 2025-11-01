@@ -85,6 +85,22 @@ def create_parser() -> argparse.ArgumentParser:
         help="ID of the watch to re-scrape"
     )
     
+    # Test webhook command
+    test_webhook_parser = subparsers.add_parser(
+        "test-webhook",
+        help="Test webhook functionality"
+    )
+    test_webhook_parser.add_argument(
+        "webhook_url",
+        help="Webhook URL to test"
+    )
+    test_webhook_parser.add_argument(
+        "--test-type",
+        choices=["basic", "new_ad", "price_change", "error", "all"],
+        default="basic",
+        help="Type of test to run (default: basic)"
+    )
+    
     return parser
 
 
@@ -171,6 +187,36 @@ async def rescrape_command(config: Config, watch_id: int) -> int:
         return 1
 
 
+async def test_webhook_command(config: Config, webhook_url: str, test_type: str = "basic") -> int:
+    """Test webhook functionality."""
+    try:
+        # Import here to avoid circular imports
+        import sys
+        import os
+        import subprocess
+        
+        # Get the project root directory
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        test_script = os.path.join(project_root, 'test_webhook.py')
+        
+        # Run the test script as a subprocess
+        cmd = [sys.executable, test_script, webhook_url, '--test-type', test_type]
+        result = subprocess.run(cmd, capture_output=True, text=True, cwd=project_root)
+        
+        # Print output
+        if result.stdout:
+            print(result.stdout)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+        
+        return result.returncode
+            
+    except Exception as e:
+        logger.error(f"Failed to test webhook: {e}")
+        print(f"❌ Error: {e}")
+        return 1
+
+
 async def main_async(args: Optional[list[str]] = None) -> int:
     """Main async entry point."""
     try:
@@ -194,6 +240,8 @@ async def main_async(args: Optional[list[str]] = None) -> int:
             return await set_webhook_command(config, parsed_args.watch_id, parsed_args.webhook_url)
         elif parsed_args.command == "rescrape":
             return await rescrape_command(config, parsed_args.watch_id)
+        elif parsed_args.command == "test-webhook":
+            return await test_webhook_command(config, parsed_args.webhook_url, parsed_args.test_type)
         else:
             parser.print_help()
             return 1

@@ -92,8 +92,6 @@ black src/
 
 ### Using Docker Compose (Recommended)
 
-**Solution 1: Dynamic User ID Mapping (Recommended)**
-
 This approach makes Docker use your exact user ID, preventing permission conflicts:
 
 ```bash
