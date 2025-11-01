@@ -44,6 +44,10 @@ jobs:
         restore-keys: |
           venv-${{ runner.os }}-${{ matrix.python-version }}-
 
+    - name: Update lock file
+      run: |
+        poetry lock --no-update
+
     - name: Install dependencies
       run: |
         poetry install --with dev
