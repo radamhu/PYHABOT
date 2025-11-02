@@ -1,0 +1,145 @@
+{
+  "name": "Job Management",
+  "description": "Background job management and monitoring endpoints",
+  "children": [
+    {
+      "name": "Force Rescrape Watch",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/jobs/watches/{{watchId}}/rescrape",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 or 202",
+          "script": "bru.test('Status is 200 or 202', () => { bru.expect([200, 202]).toContain(res.getStatus()); });"
+        },
+        {
+          "name": "Response has job info",
+          "script": "bru.test('Response has job info', () => {\n  const body = res.getBody();\n  bru.expect(body).toHaveProperty('job_id');\n  bru.expect(body).toHaveProperty('status');\n});"
+        },
+        {
+          "name": "Store job ID for later tests",
+          "script": "bru.test('Store job ID for later tests', () => {\n  const body = res.getBody();\n  if (body.job_id) {\n    bru.setVar('jobId', body.job_id.toString());\n    console.log('Stored job ID:', body.job_id);\n  }\n});"
+        }
+      ]
+    },
+    {
+      "name": "List All Jobs",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/jobs",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response is an array",
+          "script": "bru.test('Response is an array', () => { bru.expect(Array.isArray(res.getBody())).toBe(true); });"
+        }
+      ]
+    },
+    {
+      "name": "Get Job Status",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/jobs/{{jobId}}",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 or 404",
+          "script": "bru.test('Status is 200 or 404', () => { bru.expect([200, 404]).toContain(res.getStatus()); });"
+        },
+        {
+          "name": "Response has job details",
+          "script": "bru.test('Response has job details', () => {\n  if (res.getStatus() === 200) {\n    const body = res.getBody();\n    bru.expect(body).toHaveProperty('id');\n    bru.expect(body).toHaveProperty('status');\n    bru.expect(body).toHaveProperty('created_at');\n  }\n});"
+        }
+      ]
+    },
+    {
+      "name": "Cancel Job",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/{{apiVersion}}/jobs/{{jobId}}",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 or 404",
+          "script": "bru.test('Status is 200 or 404', () => { bru.expect([200, 404]).toContain(res.getStatus()); });"
+        }
+      ]
+    },
+    {
+      "name": "Get Watch Ads",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/{{watchId}}/ads",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 or 404",
+          "script": "bru.test('Status is 200 or 404', () => { bru.expect([200, 404]).toContain(res.getStatus()); });"
+        },
+        {
+          "name": "Response is an array when successful",
+          "script": "bru.test('Response is an array when successful', () => {\n  if (res.getStatus() === 200) {\n    bru.expect(Array.isArray(res.getBody())).toBe(true);\n  }\n});"
+        }
+      ]
+    }
+  ]
+}

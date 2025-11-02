@@ -1,0 +1,41 @@
+{
+  "name": "PYHABOT API Collection",
+  "version": "1.0.0",
+  "description": "Comprehensive API test collection for PYHABOT - HardverApró monitoring bot with webhook support",
+  "environment": {
+    "base_url": "http://localhost:8000",
+    "api_version": "api/v1"
+  },
+  "variables": [
+    {
+      "name": "baseUrl",
+      "value": "{{base_url}}",
+      "description": "API base URL"
+    },
+    {
+      "name": "apiVersion", 
+      "value": "{{api_version}}",
+      "description": "API version"
+    },
+    {
+      "name": "watchId",
+      "value": "1",
+      "description": "Test watch ID"
+    },
+    {
+      "name": "testHardveraproUrl",
+      "value": "https://hardverapro.hu/vegyseg/monitorok",
+      "description": "Test HardverApró URL"
+    },
+    {
+      "name": "testDiscordWebhook",
+      "value": "https://discord.com/api/webhooks/YOUR_CHANNEL_ID/YOUR_TOKEN",
+      "description": "Test Discord webhook URL"
+    },
+    {
+      "name": "testSlackWebhook", 
+      "value": "YOUR_SLACK_WEBHOOK_URL_HERE",
+      "description": "Test Slack webhook URL"
+    }
+  ]
+}

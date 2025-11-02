@@ -1,0 +1,210 @@
+{
+  "name": "Watch Management",
+  "description": "CRUD operations for managing watches",
+  "children": [
+    {
+      "name": "Create Watch",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "url": "{{testHardveraproUrl}}",
+            "webhook_url": "{{testDiscordWebhook}}"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 201",
+          "script": "bru.test('Status is 201', () => { bru.expect(res.getStatus()).toBe(201); });"
+        },
+        {
+          "name": "Response has required fields",
+          "script": "bru.test('Response has required fields', () => {\n  const body = res.getBody();\n  bru.expect(body).toHaveProperty('id');\n  bru.expect(body).toHaveProperty('url');\n  bru.expect(body).toHaveProperty('last_checked');\n  bru.expect(body).toHaveProperty('active');\n});"
+        },
+        {
+          "name": "Store watch ID for later tests",
+          "script": "bru.test('Store watch ID for later tests', () => {\n  const body = res.getBody();\n  bru.setVar('watchId', body.id.toString());\n  console.log('Stored watch ID:', body.id);\n});"
+        }
+      ]
+    },
+    {
+      "name": "Create Watch without Webhook",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "url": "{{testHardveraproUrl}}?q=test"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 201",
+          "script": "bru.test('Status is 201', () => { bru.expect(res.getStatus()).toBe(201); });"
+        },
+        {
+          "name": "Webhook is null",
+          "script": "bru.test('Webhook is null', () => { bru.expect(res.getBody().webhook).toBeNull(); });"
+        }
+      ]
+    },
+    {
+      "name": "Create Watch - Invalid URL",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "url": "https://google.com",
+            "webhook_url": "{{testDiscordWebhook}}"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 400 or 422",
+          "script": "bru.test('Status is 400 or 422', () => { bru.expect([400, 422]).toContain(res.getStatus()); });"
+        }
+      ]
+    },
+    {
+      "name": "List All Watches",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response is an array",
+          "script": "bru.test('Response is an array', () => { bru.expect(Array.isArray(res.getBody())).toBe(true); });"
+        }
+      ]
+    },
+    {
+      "name": "Get Specific Watch",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/{{watchId}}",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response has correct ID",
+          "script": "bru.test('Response has correct ID', () => { bru.expect(res.getBody().id).toBe(parseInt(bru.getVar('watchId'))); });"
+        }
+      ]
+    },
+    {
+      "name": "Get Watch - Not Found",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/99999",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 404",
+          "script": "bru.test('Status is 404', () => { bru.expect(res.getStatus()).toBe(404); });"
+        }
+      ]
+    },
+    {
+      "name": "Delete Watch",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/{{watchId}}",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 or 204",
+          "script": "bru.test('Status is 200 or 204', () => { bru.expect([200, 204]).toContain(res.getStatus()); });"
+        }
+      ]
+    }
+  ]
+}

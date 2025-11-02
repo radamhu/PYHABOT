@@ -62,7 +62,7 @@ curl -X PUT "http://localhost:8000/api/v1/watches/1/webhook" \
 #### Slack Webhook Example
 ```json
 {
-  "webhook_url": "https://hooks.slack.com/services/T000/B000/XXX",
+  "webhook_url": "YOUR_SLACK_WEBHOOK_URL_HERE",
   "webhook_type": "slack",
   "webhook_username": "PYHABOT"
 }
@@ -264,7 +264,7 @@ curl -X POST "http://localhost:8000/api/v1/webhooks/test" \
    curl -X PUT "http://localhost:8000/api/v1/watches/1/webhook" \
      -H "Content-Type: application/json" \
      -d '{
-       "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+       "webhook_url": "YOUR_SLACK_WEBHOOK_URL_HERE",
        "webhook_type": "slack",
        "webhook_username": "PYHABOT"
      }'

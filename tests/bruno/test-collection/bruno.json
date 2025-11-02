@@ -1,0 +1,14 @@
+{
+  "name": "Test Collection",
+  "version": "1.0.0",
+  "description": "Simple test collection",
+  "environment": {
+    "base_url": "http://localhost:8000"
+  },
+  "variables": [
+    {
+      "name": "baseUrl",
+      "value": "{{base_url}}"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "name": "Webhook Management",
+  "description": "Webhook configuration and testing endpoints",
+  "children": [
+    {
+      "name": "Set Webhook - Discord",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/{{watchId}}/webhook",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "{{testDiscordWebhook}}",
+            "webhook_type": "discord",
+            "webhook_username": "PYHABOT",
+            "webhook_avatar": "https://example.com/pyhabot-avatar.png",
+            "custom_headers": {
+              "User-Agent": "PYHABOT-Webhook/1.0"
+            }
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response has webhook URL",
+          "script": "bru.test('Response has webhook URL', () => { bru.expect(res.getBody()).toHaveProperty('webhook_url'); });"
+        }
+      ]
+    },
+    {
+      "name": "Set Webhook - Slack",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/{{watchId}}/webhook",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "{{testSlackWebhook}}",
+            "webhook_type": "slack",
+            "webhook_username": "PYHABOT Bot",
+            "custom_headers": {
+              "Authorization": "Bearer slack-token"
+            }
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        }
+      ]
+    },
+    {
+      "name": "Set Webhook - Generic",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/{{watchId}}/webhook",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "https://httpbin.org/post",
+            "webhook_type": "generic",
+            "custom_headers": {
+              "X-API-Key": "test-api-key",
+              "Content-Type": "application/json"
+            }
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        }
+      ]
+    },
+    {
+      "name": "Get Webhook Configuration",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/watches/{{watchId}}/config",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response has webhook config",
+          "script": "bru.test('Response has webhook config', () => {\n  const body = res.getBody();\n  bru.expect(body).toHaveProperty('watch_id');\n  bru.expect(body).toHaveProperty('webhook_url');\n  bru.expect(body).toHaveProperty('webhook_type');\n});"
+        }
+      ]
+    },
+    {
+      "name": "Remove Webhook",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/{{apiVersion}}/watches/{{watchId}}/webhook",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 or 204",
+          "script": "bru.test('Status is 200 or 204', () => { bru.expect([200, 204]).toContain(res.getStatus()); });"
+        }
+      ]
+    }
+  ]
+}

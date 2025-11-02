@@ -1,0 +1,87 @@
+{
+  "name": "Health Checks",
+  "description": "Basic health and connectivity endpoints",
+  "children": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response has status field",
+          "script": "bru.test('Response has status field', () => { bru.expect(res.getBody()).toHaveProperty('status'); });"
+        }
+      ]
+    },
+    {
+      "name": "Ping",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/ping",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response is pong",
+          "script": "bru.test('Response is pong', () => { bru.expect(res.getBody()).toBe('pong'); });"
+        }
+      ]
+    },
+    {
+      "name": "Version Info",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/version",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response has version field",
+          "script": "bru.test('Response has version field', () => { bru.expect(res.getBody()).toHaveProperty('version'); });"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "name": "Webhook Testing",
+  "description": "Test webhook functionality with different platforms",
+  "children": [
+    {
+      "name": "Test Discord Webhook",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/test",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "{{testDiscordWebhook}}",
+            "webhook_type": "discord",
+            "webhook_username": "PYHABOT Test",
+            "webhook_avatar": "https://example.com/pyhabot-test.png",
+            "test_message": "🤖 This is a test notification from PYHABOT!\\n\\n**Features:**\\n- ✅ Real-time monitoring\\n- 🔔 Instant notifications\\n- 📊 Detailed analytics"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response has test results",
+          "script": "bru.test('Response has test results', () => {\n  const body = res.getBody();\n  bru.expect(body).toHaveProperty('success');\n  bru.expect(body).toHaveProperty('attempts');\n  bru.expect(body).toHaveProperty('total_time');\n});"
+        }
+      ]
+    },
+    {
+      "name": "Test Slack Webhook",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/test",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "{{testSlackWebhook}}",
+            "webhook_type": "slack",
+            "webhook_username": "PYHABOT Bot",
+            "test_message": "🚀 PYHABOT Test Notification\\n\\n*Monitoring HardverApró listings with ease!*\\n• New ad alerts\\n• Price change notifications\\n• Custom webhooks"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        }
+      ]
+    },
+    {
+      "name": "Test Generic Webhook",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/test",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "https://httpbin.org/post",
+            "webhook_type": "generic",
+            "custom_headers": {
+              "X-Custom-Header": "PYHABOT-Test",
+              "Authorization": "Bearer test-token"
+            },
+            "test_message": "Generic webhook test from PYHABOT"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        }
+      ]
+    },
+    {
+      "name": "Test Webhook with Custom Headers",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/test",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "https://httpbin.org/headers",
+            "webhook_type": "generic",
+            "custom_headers": {
+              "X-API-Key": "pyhabot-api-key-123",
+              "X-Environment": "testing",
+              "X-Client": "PYHABOT-Bruno-Tests",
+              "User-Agent": "PYHABOT-Webhook-Tester/1.0"
+            },
+            "test_message": "Testing custom headers functionality"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        }
+      ]
+    },
+    {
+      "name": "Test Invalid Webhook URL",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/test",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "webhook_url": "https://invalid-webhook-url-that-does-not-exist.com/webhook",
+            "webhook_type": "discord",
+            "test_message": "This should fail"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 (but test fails)",
+          "script": "bru.test('Status is 200 (but test fails)', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Success is false",
+          "script": "bru.test('Success is false', () => { bru.expect(res.getBody().success).toBe(false); });"
+        },
+        {
+          "name": "Has error message",
+          "script": "bru.test('Has error message', () => { bru.expect(res.getBody()).toHaveProperty('error_message'); });"
+        }
+      ]
+    },
+    {
+      "name": "Test Watch Webhook",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/watches/{{watchId}}/test",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "json",
+          "json": {
+            "test_message": "Test notification for specific watch #{{watchId}}"
+          }
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200 or 404",
+          "script": "bru.test('Status is 200 or 404', () => { bru.expect([200, 404]).toContain(res.getStatus()); });"
+        }
+      ]
+    },
+    {
+      "name": "Get Webhook Types",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{apiVersion}}/webhooks/types",
+        "headers": [
+          {
+            "name": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "none"
+        }
+      },
+      "response": [],
+      "tests": [
+        {
+          "name": "Status is 200",
+          "script": "bru.test('Status is 200', () => { bru.expect(res.getStatus()).toBe(200); });"
+        },
+        {
+          "name": "Response has webhook types",
+          "script": "bru.test('Response has webhook types', () => {\n  const body = res.getBody();\n  bru.expect(body).toHaveProperty('supported_types');\n  bru.expect(Array.isArray(body.supported_types)).toBe(true);\n});"
+        }
+      ]
+    }
+  ]
+}
