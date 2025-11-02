@@ -9,6 +9,8 @@ export DOCKER_BUILDKIT=1
 # Required: Integration type
 export INTEGRATION=terminal
 
+export WEBHOOK_URL=https://your-webhook-endpoint.com/notify
+
 # Optional: Data directory (default: ./persistent_data)
 export PERSISTENT_DATA_PATH=./persistent_data
 

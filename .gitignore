@@ -70,6 +70,7 @@ coverage/
 .vscode/
 .idea/
 .DS_Store
+.specstory/
 
 # Docker overrides
 docker-compose.override.yml

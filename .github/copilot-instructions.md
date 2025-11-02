@@ -1,9 +1,28 @@
 # PYHABOT - GitHub Copilot Instructions
 
 ## Project Overview
-PYHABOT is an async Python bot that monitors HardverApró (Hungarian classified ads site) search result pages. It scrapes ads, tracks new listings and price changes, and sends notifications via Discord or terminal interface. Data is persisted in TinyDB JSON files.
+PYHABOT is an async Python bot that monitors HardverApró (Hungarian classified ads site) search result pages. It scrapes ads, tracks new listings and price changes, and sends notifications via Discord, terminal interface, or HTTP API. Data is persisted in TinyDB JSON files.
 
-**Core Purpose**: Watch specific search URLs, notify users of new ads and price changes via multiple chat integrations.
+**Core Purpose**: Watch specific search URLs, notify users of new ads and price changes via multiple chat integrations and REST API.
+
+## Deployment Options
+
+### 1. CLI Mode (Traditional)
+- Background scraping with console notifications
+- Command-line interface for watch management
+- Discord/Telegram integration for notifications
+
+### 2. API Mode (New)
+- RESTful HTTP API for web integrations
+- Interactive OpenAPI documentation at `/docs`
+- Background job processing with status tracking
+
+### 3. Hybrid Mode (Recommended)
+- **Both CLI and API run simultaneously**
+- Shared domain services for consistency
+- CLI handles background scraping
+- API provides HTTP interface for management
+- Single database, job queue, and configuration
 
 ## Project Structure
 ```
@@ -16,9 +35,21 @@ pyhabot/                    # Main package
   integrations/           # Chat platform implementations
     integration_base.py   # Abstract base classes (IntegrationBase, MessageBase)
     discord.py           # Discord client (discord.py 2.5.0)
-
     terminal.py          # Simple REPL for testing
+  api/                    # HTTP API package
+    main.py              # FastAPI application with CORS and lifecycle
+    models.py            # Pydantic models for API requests/responses
+    job_queue.py         # In-memory job queue with worker
+    job_manager.py       # Global job queue manager
+    dependencies.py      # Dependency injection setup
+    exceptions.py        # Custom API exceptions
+  adapters/api/           # API router implementations
+    watch_api.py         # Watch CRUD endpoints
+    job_api.py           # Job status and management
+    health_api.py        # Health check endpoints
 run.py                    # Entry point: bootstraps from INTEGRATION env var
+run_api.py               # API server runner for development
+start_both.sh            # Startup script for CLI + API mode
 docs/                     # Architecture and analysis documentation
 persistent_data/          # Runtime data (config.json, tinydb.json)
 ```
@@ -26,7 +57,9 @@ persistent_data/          # Runtime data (config.json, tinydb.json)
 ## Key Technologies & Dependencies
 - **Python 3.11+** with async/await patterns
 - **discord.py 2.5.0** - Discord integration
-
+- **fastapi 0.104.0** - HTTP API framework with auto OpenAPI docs
+- **uvicorn 0.24.0** - ASGI server for FastAPI
+- **pydantic 2.4.0** - Data validation and serialization
 - **aiohttp** - Async HTTP client for scraping
 - **beautifulsoup4 4.13.3** - HTML parsing
 - **tinydb 4.8.2** - JSON-based document database
@@ -103,7 +136,6 @@ Background: Pyhabot.run_forever → scraper.scrape_ads → DatabaseHandler
 - **Scraper is brittle**: Tightly coupled to HardverApró HTML structure (class names like `uad-list`). Will break if site changes.
 - **No rate limiting**: Only basic delays; no per-domain throttling
 - **TinyDB concurrency**: Single JSON file, no locking—avoid concurrent writes
-- **Webhook failures**: No retry logic, only logged
 - **Mixed language**: Commands and help mostly in Hungarian
 
 ### Testing Gaps
@@ -120,9 +152,47 @@ Background: Pyhabot.run_forever → scraper.scrape_ads → DatabaseHandler
 5. **Commands**: Update help text in Hungarian and consider English localization
 
 ### Environment Variables
-- `INTEGRATION`: discord | terminal (required)
+- `INTEGRATION`: discord | terminal (required for CLI mode)
 - `DISCORD_TOKEN`: Auth token (required for Discord integration)
 - `PERSISTENT_DATA_PATH`: Data directory (default: `./persistent_data`)
+- `MODE`: cli | api (default: api for cloud deployments)
+- `API_HOST`: API server host (default: 0.0.0.0)
+- `API_PORT`: API server port (default: 8000)
+- `API_RELOAD`: Enable auto-reload for development (default: false)
+
+## Phase 2: Webhook Support (COMPLETED)
+
+### Enhanced Webhook Features
+- **Multi-platform support**: Discord (embeds), Slack (attachments), Generic (JSON)
+- **Advanced configuration**: Custom usernames, avatars, headers, authentication
+- **Retry logic**: Exponential backoff with jitter (1s → 2s → 4s, max 60s)
+- **Smart error handling**: 4xx errors don't retry, 5xx errors do, respects rate limits
+- **Testing tools**: API endpoints and manual testing script
+- **Comprehensive documentation**: Setup guides for all platforms
+
+### New Webhook API Endpoints
+- `POST /api/v1/webhooks/test` - Test any webhook URL with validation
+- `GET /api/v1/webhooks/watches/{id}/config` - Get webhook configuration and stats
+- `POST /api/v1/webhooks/watches/{id}/test` - Test webhook for specific watch
+- `GET /api/v1/webhooks/types` - Get supported webhook types and features
+
+### Webhook Testing
+- **Unit tests**: `tests/test_webhook_api.py` - API endpoint testing
+- **Integration tests**: `tests/test_webhook_integration.py` - End-to-end webhook testing
+- **Manual testing**: `scripts/test_webhook_manual.py` - Interactive webhook validation
+- **Mock server**: Built-in test webhook server for development
+
+### Enhanced Models
+- `WebhookTestRequest/Response` - Webhook testing with detailed results
+- `SetWebhookRequest` - Advanced webhook configuration options
+- `WebhookConfigResponse` - Webhook configuration and statistics
+- Support for custom headers, authentication, and platform-specific features
+
+### Documentation
+- **Complete webhook guide**: `docs/WEBHOOK_GUIDE.md` - Setup, testing, troubleshooting
+- **Platform-specific setup**: Discord, Slack, and generic webhook configurations
+- **Security best practices**: Authentication, HTTPS, rate limiting considerations
+- **Payload formats**: Detailed examples for all webhook types
 
 ## Suggested Improvements (Tech Debt)
 - Add unit tests with HTML fixtures
@@ -130,11 +200,14 @@ Background: Pyhabot.run_forever → scraper.scrape_ads → DatabaseHandler
 - Implement crawl-delay adherence from robots.txt
 - Replace TinyDB with SQLite for better concurrency and indexing
 - Add graceful shutdown hook for aiohttp session cleanup
-- Webhook retry/backoff logic
 - English localization or i18n framework
 - Type hints everywhere + mypy in CI
+- Webhook analytics and monitoring dashboard
+- Webhook template customization per watch
 
 ## Command Reference (Quick)
+
+### CLI Commands
 - `!help` - Show commands
 - `!add <url>` - Add watch
 - `!remove <id>` - Remove watch
@@ -143,3 +216,23 @@ Background: Pyhabot.run_forever → scraper.scrape_ads → DatabaseHandler
 - `!rescrape [id]` - Force re-scrape
 - `!setwebhook <id> <url>` - Set webhook for watch
 - `!setpricealert <adid>` - Enable price alerts for ad
+
+### HTTP API Endpoints
+- `POST /api/v1/watches` - Create watch
+- `GET /api/v1/watches` - List watches
+- `GET /api/v1/watches/{id}` - Get watch
+- `DELETE /api/v1/watches/{id}` - Remove watch
+- `PUT /api/v1/watches/{id}/webhook` - Set webhook
+- `DELETE /api/v1/watches/{id}/webhook` - Remove webhook
+- `GET /api/v1/watches/{id}/ads` - Get watch ads
+- `POST /api/v1/jobs/watches/{id}/rescrape` - Force re-scraping (async)
+- `GET /api/v1/jobs/{id}` - Get job status
+- `GET /api/v1/jobs` - List all jobs
+- `DELETE /api/v1/jobs/{id}` - Cancel job
+- `POST /api/v1/webhooks/test` - Test any webhook URL
+- `GET /api/v1/webhooks/watches/{id}/config` - Get webhook configuration
+- `POST /api/v1/webhooks/watches/{id}/test` - Test watch webhook
+- `GET /api/v1/webhooks/types` - Get supported webhook types
+- `GET /health` - Health check
+- `GET /version` - API version info
+- `GET /ping` - Simple connectivity test

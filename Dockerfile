@@ -57,9 +57,10 @@ COPY --chown=pyhabot:pyhabot . .
 RUN pip install -e . && \
     rm -rf /root/.cache/pip
 
-# Copy entrypoint script and set permissions
+# Copy entrypoint scripts and set permissions
 COPY --chown=pyhabot:pyhabot entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY --chown=pyhabot:pyhabot start_both.sh /start_both.sh
+RUN chmod +x /entrypoint.sh /start_both.sh
 
 # Switch to non-root user
 USER pyhabot
@@ -67,5 +68,5 @@ USER pyhabot
 # Set entrypoint to handle secrets before running the main command
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Use the new CLI command
-CMD ["pyhabot", "run"]
+# Run both CLI and API with proper process management
+CMD ["/start_both.sh"]
