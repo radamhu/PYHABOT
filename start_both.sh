@@ -51,25 +51,50 @@ echo "  API PID: $API_PID"
 
 # Wait for API to be ready before continuing
 echo "⏳ Waiting for API to be ready..."
-max_attempts=30
+max_attempts=60  # Increased from 30 to 60 seconds
 attempt=0
 while [ $attempt -lt $max_attempts ]; do
+    # Check if API process is still running
+    if ! kill -0 $API_PID 2>/dev/null; then
+        echo "❌ API process died during startup!"
+        echo "Last 50 lines of output:"
+        tail -n 50 /proc/$$/fd/1 2>/dev/null || echo "Could not read output"
+        exit 1
+    fi
+    
+    # Try to connect to the health endpoint
     if curl -f -s "http://localhost:${API_PORT}/health" > /dev/null 2>&1; then
-        echo "✅ API is ready!"
+        echo "✅ API is ready and responding on port ${API_PORT}!"
+        # Double-check with verbose output
+        curl -v "http://localhost:${API_PORT}/health" 2>&1 | head -n 5
         break
     fi
+    
     attempt=$((attempt + 1))
-    if [ $((attempt % 5)) -eq 0 ]; then
-        echo "  Still waiting... ($attempt/$max_attempts)"
+    if [ $((attempt % 10)) -eq 0 ]; then
+        echo "  Still waiting... ($attempt/$max_attempts attempts)"
+        echo "  Checking if port ${API_PORT} is listening..."
+        netstat -tlnp 2>/dev/null | grep ":${API_PORT}" || echo "  Port not listening yet"
     fi
     sleep 1
 done
 
 if [ $attempt -eq $max_attempts ]; then
-    echo "⚠️  API health check timeout (may still be starting)"
+    echo "❌ API health check timeout after $max_attempts seconds"
+    echo "API process status:"
+    ps aux | grep "[p]ython.*run_api" || echo "API process not found"
+    echo "Listening ports:"
+    netstat -tlnp 2>/dev/null | grep LISTEN || echo "Could not check ports"
+    echo "Continuing anyway (Railway will keep checking)..."
 fi
 
 # Only start CLI if not in api-only mode
+# Default to api-only if running on Railway (detected by PORT env var)
+if [ ! -z "$PORT" ] && [ -z "$MODE" ]; then
+    echo "ℹ️  Railway detected - defaulting to API-only mode"
+    MODE="api-only"
+fi
+
 if [ "${MODE}" != "api-only" ]; then
     echo "🤖 Starting CLI background process..."
     pyhabot run >> /data/cli.log 2>&1 &

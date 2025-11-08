@@ -93,6 +93,17 @@ async def health_check(
 
 
 @router.get(
+    "/ping",
+    summary="Simple connectivity test",
+    description="Ultra-simple endpoint that just returns 200 OK",
+    response_model=dict
+)
+async def ping() -> dict:
+    """Simple ping endpoint for basic connectivity testing."""
+    return {"status": "ok", "message": "pong"}
+
+
+@router.get(
     "/version",
     summary="Get API version",
     description="Returns the current API version information.",

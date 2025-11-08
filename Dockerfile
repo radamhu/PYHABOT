@@ -27,8 +27,8 @@ RUN poetry install --only=main --no-root && \
 # Stage 2: Runtime stage with minimal dependencies
 FROM python:3.12-slim as runtime
 
-# Install only runtime dependencies (including curl for health checks)
-RUN apt-get update && apt-get install -y git curl && \
+# Install only runtime dependencies (including curl and net-tools for health checks)
+RUN apt-get update && apt-get install -y git curl net-tools procps && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

@@ -42,7 +42,12 @@ async def get_repo() -> TinyDBRepository:
         try:
             _repo = TinyDBRepository(config.persistent_data_path)
         except Exception as e:
-            raise ServiceUnavailableError("database")
+            # Don't raise - return a new instance on each call if needed
+            # This allows the API to start even if the database isn't ready
+            try:
+                return TinyDBRepository(config.persistent_data_path)
+            except Exception:
+                raise ServiceUnavailableError("database")
     return _repo
 
 
@@ -68,11 +73,11 @@ async def get_scraper() -> HardveraproScraper:
     """Get scraper instance."""
     global _scraper
     if _scraper is None:
-        # We'll need to create an aiohttp session for the scraper
-        # For now, create a placeholder
+        # Create a persistent aiohttp session
         import aiohttp
-        async with aiohttp.ClientSession() as session:
-            _scraper = HardveraproScraper(session)
+        config = await get_config()
+        session = aiohttp.ClientSession()
+        _scraper = HardveraproScraper(session, config.user_agents)
     return _scraper
 
 

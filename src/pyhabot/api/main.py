@@ -27,17 +27,33 @@ logger = get_logger(__name__)
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Manage application lifecycle."""
     # Startup
+    logger.info("=" * 60)
     logger.info("Starting PYHABOT API...")
-    job_queue = JobQueue()
-    set_job_queue(job_queue)
-    logger.info("Job queue initialized")
+    logger.info("=" * 60)
+    
+    try:
+        job_queue = JobQueue()
+        set_job_queue(job_queue)
+        logger.info("✅ Job queue initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize job queue: {e}")
+        logger.warning("⚠️  Continuing without job queue...")
+        set_job_queue(None)
+        job_queue = None
+    
+    logger.info("🚀 PYHABOT API startup complete")
+    logger.info("=" * 60)
     
     yield
     
     # Shutdown
     logger.info("Shutting down PYHABOT API...")
     if job_queue:
-        await job_queue.shutdown()
+        try:
+            await job_queue.shutdown()
+            logger.info("✅ Job queue shutdown complete")
+        except Exception as e:
+            logger.error(f"Error shutting down job queue: {e}")
     logger.info("API shutdown complete")
 
 
