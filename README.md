@@ -4,6 +4,33 @@
 
 # PYHABOT
 
+<p align="center">
+  <a href="https://github.com/radamhu/PYHABOT/actions/workflows/build-and-push.yml">
+    <img src="https://github.com/radamhu/PYHABOT/actions/workflows/build-and-push.yml/badge.svg" alt="Build Status">
+  </a>
+  <a href="https://github.com/radamhu/PYHABOT/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="License: GPL v3">
+  </a>
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+">
+  </a>
+  <a href="https://ghcr.io/radamhu/pyhabot">
+    <img src="https://img.shields.io/badge/container-ghcr.io-blue" alt="Container Registry">
+  </a>
+  <a href="https://github.com/radamhu/PYHABOT/releases">
+    <img src="https://img.shields.io/github/v/release/radamhu/PYHABOT?include_prereleases" alt="GitHub Release">
+  </a>
+  <a href="https://github.com/radamhu/PYHABOT/commits/master">
+    <img src="https://img.shields.io/github/last-commit/radamhu/PYHABOT" alt="Last Commit">
+  </a>
+  <a href="https://github.com/radamhu/PYHABOT/issues">
+    <img src="https://img.shields.io/github/issues/radamhu/PYHABOT" alt="GitHub Issues">
+  </a>
+  <a href="https://github.com/radamhu/PYHABOT">
+    <img src="https://img.shields.io/github/stars/radamhu/PYHABOT?style=social" alt="GitHub Stars">
+  </a>
+</p>
+
 This fork was created to add extra features. Original repo by Patrick2562: [PYHABOT](https://github.com/Patrick2562/PYHABOT) 
 
 **PYHABOT** is a _web scraping_ application in Python, which reviews the ads uploaded to [Hardverapró](https://hardverapro.hu) and sends notifications when a new one is published, about those that meet the conditions specified by us. It runs as a simple async Python application with console notifications and optional webhook support.
@@ -344,3 +371,163 @@ python scripts/test_webhook_manual.py \
   --username "PYHABOT" \
   --verbose
 ```
+
+---
+
+## Update History
+
+This section provides a semantic-based overview of major updates and improvements to PYHABOT, organized by development phases and key features.
+
+### Phase 3: Infrastructure & Deployment (November 2025)
+**Focus**: Production readiness, CI/CD, and operational improvements
+
+- **CI/CD Pipeline** (Nov 2025)
+  - GitHub Actions workflow for automated Docker builds
+  - Multi-registry support (GHCR + Docker Hub)
+  - Automated testing and deployment pipeline
+  - Build caching and optimization
+
+- **API Testing & Validation** (Nov 2025)
+  - Bruno API test suite integration
+  - Comprehensive webhook testing capabilities
+  - Health check improvements (503 bad gateway fixes)
+  - API documentation updates
+
+- **Documentation Enhancement** (Nov 2025)
+  - Complete API implementation summary
+  - GitHub Actions setup guide
+  - Docker layer caching documentation
+  - Webhook testing guide
+
+### Phase 2: Advanced Webhook Support (October-November 2025)
+**Focus**: Multi-platform integrations and robust notification system
+
+- **Multi-Platform Webhooks** (Nov 2025)
+  - Discord webhook support with rich embeds
+  - Slack webhook integration with attachments
+  - Generic webhook support for custom integrations
+  - Custom headers and authentication support
+
+- **Webhook Testing Tools** (Nov 2025)
+  - API endpoints for webhook validation (`/api/v1/webhooks/test`)
+  - Watch-specific webhook testing
+  - Manual testing script for development
+  - Comprehensive error handling and retry logic
+
+- **Webhook Configuration** (Nov 2025)
+  - Advanced webhook configuration options
+  - Webhook type detection and validation
+  - Configuration retrieval endpoints
+  - Statistics and monitoring support
+
+### Phase 1: HTTP API & Architecture Refactor (September-October 2025)
+**Focus**: RESTful API, modular architecture, and cloud deployment
+
+- **Architecture Overhaul** (Oct-Nov 2025)
+  - Complete application refactoring with hexagonal architecture
+  - Simplified CLI with domain services
+  - Hybrid mode: CLI + API running simultaneously
+  - Shared services and unified data layer
+
+- **FastAPI Implementation** (Oct 2025)
+  - RESTful HTTP API endpoints
+  - Interactive OpenAPI documentation at `/docs`
+  - Background job queue with async processing
+  - Job status tracking and management
+
+- **API Endpoints** (Oct 2025)
+  - Watch management (CRUD operations)
+  - Job control and monitoring
+  - Health checks and version info
+  - Webhook configuration endpoints
+
+- **Testing Infrastructure** (Oct 2025)
+  - Comprehensive test suite
+  - Coverage reporting (HTML)
+  - Domain service tests
+  - Integration tests for webhooks
+
+### Foundation Updates (2023-2025)
+**Focus**: Core functionality, scraping improvements, and stability
+
+- **Scraper Enhancements** (Sep 2025)
+  - Anti-detection features for web scraping
+  - Improved ad entry validation logic
+  - Support for pinned ads display
+  - Better aiohttp session management with lazy initialization
+
+- **Docker Support** (Dec 2023)
+  - Complete Docker containerization
+  - Docker Compose stack for easy deployment
+  - User/group mapping for permission management
+  - Environment variable configuration
+
+- **Stability Improvements** (2023-2025)
+  - Site layout updates tracking
+  - Message formatting improvements
+  - Scraper fixes for HTML changes
+  - Dependency updates and security patches
+
+- **Original Implementation** (2021)
+  - Initial bot creation by Patrick2562
+  - Discord/Telegram integration
+  - Basic web scraping functionality
+  - Watch management system
+
+### Key Technical Milestones
+
+- **2025-11**: Production deployment improvements, CI/CD pipeline
+- **2025-10**: Complete architecture refactor, API implementation
+- **2025-09**: Scraper improvements, anti-detection features
+- **2023-12**: Docker support, containerization
+- **2021-05**: Initial release, basic functionality
+
+For detailed technical documentation, see:
+- [Architecture Overview](docs/ARCHITECTURE.md)
+- [API Implementation Summary](docs/API_IMPLEMENTATION_SUMMARY.md)
+- [Webhook Guide](docs/WEBHOOK_GUIDE.md)
+- [GitHub Actions Setup](docs/GITHUB_ACTIONS_SETUP.md)
+- [Docker Optimization](docs/DOCKER_LAYER_CACHING_AND_RICH_LOGGING.md)
+
+---
+
+## License
+
+PYHABOT is free software: you can redistribute it and/or modify it under the terms of the **GNU General Public License v3.0** as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [GNU General Public License](LICENSE) for more details.
+
+### License Summary
+
+- ✅ **Commercial use** - You may use this software commercially
+- ✅ **Modification** - You may modify this software
+- ✅ **Distribution** - You may distribute this software
+- ✅ **Patent use** - This license provides an express grant of patent rights from contributors
+- ✅ **Private use** - You may use and modify the software without distributing it
+
+**Conditions:**
+- 📋 **Disclose source** - Source code must be made available when distributing
+- 📋 **License and copyright notice** - Include a copy of the license and copyright notice
+- 📋 **Same license** - Modifications must be released under the same license
+- 📋 **State changes** - Document changes made to the code
+
+**Limitations:**
+- ❌ **Liability** - The software is provided without warranty
+- ❌ **Warranty** - No warranty is provided
+
+For the full license text, see the [LICENSE](LICENSE) file in the repository.
+
+### Original Work
+
+This is a fork of the original PYHABOT by Patrick2562. The original project can be found at: [https://github.com/Patrick2562/PYHABOT](https://github.com/Patrick2562/PYHABOT)
+
+### Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. By contributing to this project, you agree to license your contributions under the GPL-3.0 license.
+
+---
+
+<p align="center">
+  Made with ❤️ by the PYHABOT community
+</p>
+
