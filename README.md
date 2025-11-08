@@ -25,14 +25,47 @@ This fork was created to add extra features. Original repo by Patrick2562: [PYHA
 
 ### Option 1: Poetry (Recommended)
 ```bash
-# Install Poetry (if not already installed)
-curl -sSL https://install.python-poetry.org | python3 -
+# Install pyenv and pyenv-virtualenv if not already installed
+# Install Python 3.12.5
+pyenv install 3.12.5
 
-# Install dependencies
+# Install Poetry (if not already installed)
+pyenv exec pip install poetry
+
+# Install dependencies (virtual environment will be created automatically, dependencies installed, install project)
 poetry install
 
 # Activate virtual environment
-poetry shell
+eval $(pyenv exec poetry env activate)
+# reload shell to apply changes
+exec $SHELL
+# Alternatively, use:
+source <(pyenv exec poetry env activate)
+
+# To deactivate the virtual environment, simply run:
+poetry env deactivate
+
+# To completely remove the virtual environment associated with your project, use:
+
+# Option 1: Manual removal
+# Find the environment path
+poetry env info --path
+# Then remove it (usually ~/.cache/pypoetry/virtualenvs/your-project-name)
+rm -rf ~/.cache/pypoetry/virtualenvs/PYHABOT-*
+
+# Option 2: Poetry command
+# This will remove the virtual environment associated with your project
+poetry env remove python
+
+# Option 3: Remove all Poetry environments
+# WARNING: This removes ALL Poetry environments
+rm -rf ~/.cache/pypoetry/virtualenvs/
+
+# Option 4: If you used pyenv with Poetry
+# First deactivate the environment
+pyenv deactivate
+# Then remove the pyenv virtualenv
+pyenv uninstall pyhabot
 ```
 
 ### Option 2: pip
