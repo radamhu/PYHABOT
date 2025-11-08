@@ -27,8 +27,8 @@ RUN poetry install --only=main --no-root && \
 # Stage 2: Runtime stage with minimal dependencies
 FROM python:3.12-slim as runtime
 
-# Install only runtime dependencies
-RUN apt-get update && apt-get install -y git && \
+# Install only runtime dependencies (including curl for health checks)
+RUN apt-get update && apt-get install -y git curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -61,6 +61,9 @@ RUN pip install -e . && \
 COPY --chown=pyhabot:pyhabot entrypoint.sh /entrypoint.sh
 COPY --chown=pyhabot:pyhabot start_both.sh /start_both.sh
 RUN chmod +x /entrypoint.sh /start_both.sh
+
+# Expose port for Railway (Railway will set PORT env var)
+EXPOSE 8000
 
 # Switch to non-root user
 USER pyhabot
